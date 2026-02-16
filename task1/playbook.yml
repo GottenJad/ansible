@@ -1,0 +1,86 @@
+---
+- name: task1 - setup nginx for static files
+  hosts: localhost
+  connection: local
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: install nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+      tags: nginx
+
+    - name: create html directory for Ubuntu/Debian
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        mode: '0755'
+        owner: www-data
+        group: www-data
+
+    - name: create files directory
+      ansible.builtin.file:
+        path: /home/denis/DZ3/task1/files
+        state: directory
+        mode: '0755'
+        recurse: yes
+
+    - name: create test files
+      ansible.builtin.copy:
+        content: "test file number {{ item }}\n"
+        dest: "/home/denis/DZ3/task1/files/{{ item }}.txt"
+        mode: '0644'
+      loop: [1, 2, 3]
+
+    - name: create subfolder
+      ansible.builtin.file:
+        path: /home/denis/DZ3/task1/files/subfolder
+        state: directory
+        mode: '0755'
+
+    - name: create file in subfolder
+      ansible.builtin.copy:
+        content: "file in subfolder\n"
+        dest: "/home/denis/DZ3/task1/files/subfolder/test.txt"
+        mode: '0644'
+
+    - name: deploy nginx config
+      ansible.builtin.template:
+        src: templates/web-nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - test nginx config
+        - restart nginx
+
+    - name: ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: create index.html
+      ansible.builtin.copy:
+        content: |
+          <html>
+          <head><title>Task1 - Nginx Static Files</title></head>
+          <body>
+          <h1>Nginx is working!</h1>
+          <p>Go to <a href="/files/">/files/</a> to see the file listing</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+  handlers:
+    - name: test nginx config
+      ansible.builtin.command: nginx -t
+      register: nginx_test
+      changed_when: false
+
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+      when: nginx_test is success

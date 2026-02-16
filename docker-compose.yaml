@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  nginx-files:
+    image: nginx:alpine
+    container_name: nginx-files
+    ports:
+      - "8081:80"
+    volumes:
+      - ./task1/files.conf:/etc/nginx/conf.d/files.conf:ro
+      - ./task1/files:/home/denis/DZ3/task1/files:ro  
+    restart: unless-stopped
