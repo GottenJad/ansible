@@ -1,0 +1,2 @@
+http://192.168.1.72/ for nginx 
+http://192.168.1.72/files/ w files

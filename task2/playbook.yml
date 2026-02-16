@@ -1,0 +1,22 @@
+---
+- name: Test custom nginx_port module
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Generate nginx config with port 8080 using custom module
+      nginx_port:
+        port: 8080
+        dest: /tmp/nginx_test.conf
+      register: result
+
+    - name: Show result
+      debug:
+        var: result
+
+    - name: Display generated config
+      command: cat /tmp/nginx_test.conf
+      register: cat_output
+
+    - name: Show config content
+      debug:
+        var: cat_output.stdout

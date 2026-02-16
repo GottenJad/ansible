@@ -1,0 +1,9 @@
+[webservers]
+web1 ansible_connection=docker ansible_user=root
+web2 ansible_connection=docker ansible_user=root
+
+[loadbalancer]
+rrobin ansible_connection=docker ansible_user=root
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

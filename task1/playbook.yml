@@ -2,8 +2,6 @@
 - name: task1 - setup nginx for static files
   hosts: localhost
   connection: local
-  become: yes
-  gather_facts: yes
 
   tasks:
     - name: install nginx

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web1:
+    image: nginx:alpine
+    container_name: web1
+    networks:
+      - balancer_net
+
+  web2:
+    image: nginx:alpine
+    container_name: web2
+    networks:
+      - balancer_net
+
+  rrobin:
+    image: nginx:alpine
+    container_name: rrobin
+    networks:
+      - balancer_net
+    ports:
+      - "80:80"
+
+networks:
+  balancer_net:
+    driver: bridge
